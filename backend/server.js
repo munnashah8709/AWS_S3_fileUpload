@@ -27,8 +27,7 @@ app.post('/images', upload.single('image'), async (req, res) => {
   const description = req.body.description;
 
   const response = {
-    imagePath: imageUrl,  // Use the image URL instead of concatenating path
-    url: imageUrl
+    imagePath: imageUrl,
   };
 
   res.send(response);

@@ -1,35 +1,34 @@
 import { useState } from 'react'
 import axios from 'axios'
-
 import './App.css'
 
-async function postImage({image, description}) {
+async function postImage({ image, description }) {
   const formData = new FormData();
   formData.append("image", image, image.name)
   formData.append("description", description)
-
-  const result = await axios.post('/images', formData, { headers: {'Content-Type': 'multipart/form-data'}})
+  const result = await axios.post('/images', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
   return result.data
 }
 
 function App() {
-  const [file, setFile] = useState()
   const [description, setDescription] = useState("")
   const [images, setImages] = useState([])
-  const [originalurl, setoriginalurl]=useState("")
+  const [originalurl, setOriginalUrl] = useState("")
 
-  const submit = async event => {
-    event.preventDefault()
-    const result = await postImage({image: file, description})
-    setImages([result.image, ...images])
-    console.log(result.url)
-    setoriginalurl(result.url)
+  const fileSelected = async event => {
+    const file = event.target.files[0]
+    if (file) {
+      const result = await postImage({ image: file, description });
+      setImages([result.image, ...images]);
+      console.log(result.url);
+      setOriginalUrl(result.url);
+    }
   }
 
-  const fileSelected = event => {
-    const file = event.target.files[0]
-		setFile(file)
-	}
+  const submit = async () => {
+  
+  }
+
 
   return (
     <div className="App">
@@ -39,11 +38,6 @@ function App() {
         <button type="submit">Submit</button>
       </form>
 
-      { images.map( image => (
-        <div key={image}>
-          <img src={image}></img>
-        </div>
-      ))}
       {originalurl && <div>
         <img src={originalurl} alt="Uploaded Image" />
       </div>}
