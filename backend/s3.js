@@ -14,26 +14,28 @@ const s3 = new S3({
 })
 
 // uploads a file to s3
-function uploadFile(file) {
-  const fileStream = fs.createReadStream(file.path)
-
+async function uploadFile(file) {
+  const originalFileName = file.originalname;
   const uploadParams = {
     Bucket: bucketName,
-    Body: fileStream,
-    Key: file.filename
-  }
-
-  return s3.upload(uploadParams).promise()
+    Body: fs.createReadStream(file.path),
+    Key: `${file.filename}${originalFileName}`
+  };
+  const result = await s3.upload(uploadParams).promise();
+  const imageUrl = result.Location;  // Get the URL of the uploaded image
+  return imageUrl;
 }
-exports.uploadFile = uploadFile
+
+exports.uploadFile = uploadFile;
+
+
 
 
 // downloads a file from s3
 function getFileStream(fileKey) {
-  const downloadParams = {
-    Key: fileKey,
-    Bucket: bucketName
-  }
- return s3.getObject(downloadParams).createReadStream()
+  const downloadParams = {Key: fileKey,Bucket: bucketName};
+  return s3.getObject(downloadParams).createReadStream();
 }
-exports.getFileStream = getFileStream
+
+exports.getFileStream = getFileStream;
+

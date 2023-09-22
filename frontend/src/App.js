@@ -5,24 +5,25 @@ import './App.css'
 
 async function postImage({image, description}) {
   const formData = new FormData();
-  formData.append("image", image)
+  formData.append("image", image, image.name)
   formData.append("description", description)
 
   const result = await axios.post('/images', formData, { headers: {'Content-Type': 'multipart/form-data'}})
   return result.data
 }
 
-
 function App() {
   const [file, setFile] = useState()
   const [description, setDescription] = useState("")
   const [images, setImages] = useState([])
+  const [originalurl, setoriginalurl]=useState("")
 
   const submit = async event => {
     event.preventDefault()
     const result = await postImage({image: file, description})
     setImages([result.image, ...images])
-    console.log(result)
+    console.log(result.url)
+    setoriginalurl(result.url)
   }
 
   const fileSelected = event => {
@@ -43,7 +44,9 @@ function App() {
           <img src={image}></img>
         </div>
       ))}
-      <img src="/images/2a1cd18878e5c8dc52d522eb092ba542"></img>
+      {originalurl && <div>
+        <img src={originalurl} alt="Uploaded Image" />
+      </div>}
     </div>
   );
 }
